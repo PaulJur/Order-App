@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Order_App": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\Paulius\\source\\repos\\Order_App"
+    }
+  }
+}

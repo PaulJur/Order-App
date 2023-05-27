@@ -12,7 +12,7 @@ namespace Order_app
 {
     class Entry
     {
-        static string connectionString = @"Data Source=Orders.db";
+        static string connectionString = @"Data Source=Order_App.db";
         static void Main(string[] args)
         {
             using (var connection = new SqliteConnection(connectionString)) 
@@ -27,6 +27,7 @@ namespace Order_app
                         Date Text,
                         Quantity INTEGER,
                         Price INTEGER)";
+
 
                 tableCmd.ExecuteNonQuery();
 
