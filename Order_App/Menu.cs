@@ -22,8 +22,6 @@ namespace Order_App
 
             while (exitApp == false)
             {
-                Console.WriteLine("\nMade by Paulius Jurgelis");
-                Thread.Sleep(1000);
                 Console.WriteLine("\n\nMAIN MENU");
                 Console.WriteLine("\nWhat would you like to do?");
                 Console.WriteLine("\nType 0 to exit the application.");
@@ -43,10 +41,10 @@ namespace Order_App
                         Environment.Exit(0);
                         break;
                     case "1":
-                        //ViewRecords()
+                        orderManager.GetRecords();
                         break;
                     case "2":
-                        //InsertRecords()
+                        orderManager.Insert();
                         break;
                     case "3":
                         //UpdateRecords()
