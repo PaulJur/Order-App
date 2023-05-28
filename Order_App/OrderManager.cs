@@ -137,6 +137,37 @@ namespace Order_App
             }
         }
 
+        public void Delete()
+        {
+            Console.Clear();
+            GetRecords();
+            var recordId = GetUserQuantity("\n\nWrite the Id of the record you want to delete.");
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText =
+                    $"DELETE from order_table WHERE Id = '{recordId}'";
+
+                int rowCount = tableCmd.ExecuteNonQuery();
+
+                if(rowCount == 0)// 0 means if no rows were affected by the command, retry. If user inputs 1 and Id 1 exists, it will tell the user it was deleted
+                    //Otherwise it will ask the user to retry.
+                {
+                    Console.WriteLine($"\n\nRecord with Id {recordId} does not exist. \n\n");
+                    Delete();
+                }
+                
+                Console.WriteLine($"\n\nRecord with Id {recordId} was deleted. \n\n");
+
+                connection.Close();
+
+            }
+            
+        }
+
     }
 
     public class Orders

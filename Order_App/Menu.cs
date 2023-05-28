@@ -50,7 +50,7 @@ namespace Order_App
                         //UpdateRecords()
                         break;
                     case "4":
-                        //DeleteRecords()
+                        orderManager.Delete();
                         break;
                     default:
                         Console.WriteLine("\nInvalid input. Choose 0-4");
