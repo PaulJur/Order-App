@@ -102,7 +102,7 @@ namespace Order_App
                 tableCmd.CommandText =
                     $"SELECT * FROM order_table";
 
-                List<Orders> tableData = new();
+                List<OrderTypes> tableData = new();
 
                 SqliteDataReader reader = tableCmd.ExecuteReader();
 
@@ -111,7 +111,7 @@ namespace Order_App
                     while(reader.Read()) 
                     {
                         tableData.Add(
-                        new Orders
+                        new OrderTypes()
                         {
                             Id = reader.GetInt32(0),
                             Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
@@ -168,15 +168,52 @@ namespace Order_App
             
         }
 
-    }
+        public void Update()
+        {
+            Console.Clear();
+            GetRecords();
 
-    public class Orders
-    {
-        public int Id { get; set; }
-        public DateTime Date { get; set; }
-        public int Quantity { get; set; }
-        public int Price { get; set; }
-    }
+            var getId = GetUserQuantity("\n\nType the Id of the record you want to update or type 0 to go back to the main menu.\n\n");
 
-            
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+
+                var tableCmd = connection.CreateCommand();
+                tableCmd.CommandText =
+                    $"SELECT EXISTS(SELECT 1 FROM order_table WHERE Id = {getId})";
+                tableCmd.Parameters.AddWithValue("@Id", getId);
+                int checkQuery = Convert.ToInt32(tableCmd.ExecuteScalar());//returns the value from the database
+
+                if(checkQuery== 0) 
+                {
+                    Console.WriteLine($"\n\nRecord with Id {getId} does not exist.\n\n");
+                    connection.Close();
+                    Update();
+                
+                }
+
+                string date = GetUserDate();
+
+                int quantity = GetUserQuantity("\n\nUpdate the amount of stock you want to buy.\n\n");
+
+                int price = GetUserPrice();
+
+                var tableCommand = connection.CreateCommand();
+
+
+
+                tableCommand.CommandText = 
+                    $"UPDATE order_table SET date = '{date}', quantity = {quantity}, price = {price} WHERE Id = {getId}";
+                tableCommand.Parameters.AddWithValue("@Date",date);
+                tableCommand.Parameters.AddWithValue("@Quantity", quantity);
+                tableCommand.Parameters.AddWithValue("@Id", getId);
+                tableCommand.ExecuteNonQuery();
+
+                connection.Close();
+            }
+
+        }
+
+    }         
 }

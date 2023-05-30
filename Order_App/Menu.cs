@@ -47,7 +47,7 @@ namespace Order_App
                         orderManager.Insert();
                         break;
                     case "3":
-                        //UpdateRecords()
+                        orderManager.Update();
                         break;
                     case "4":
                         orderManager.Delete();
