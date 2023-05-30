@@ -12,6 +12,7 @@ namespace Order_App
         private DateTime _date { get; set; }
         private int _quantity { get; set; }
         private int _price { get; set; }
+        private string _type { get; set; }
 
         public int Id 
         { 
@@ -35,6 +36,12 @@ namespace Order_App
         {
             get { return _price; }
             set{ _price = value; }
+        }
+
+        public string MaterialType
+        {
+            get { return _type; }
+            set { _type = value; }
         }
     }
 }

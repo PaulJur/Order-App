@@ -12,6 +12,8 @@ namespace Order_App
     {
         static string connectionString = @"Data Source=Order_App.db";
         private int finalNumberInput;
+        private int finalTypeInput;
+        private string materialName;
         private Menu menu;
         internal int GetUserQuantity(string message)//Gets an int output from a user with validation checks. **Code snippet**
         {
@@ -58,9 +60,53 @@ namespace Order_App
             return dateInput;
         }
 
+       
+
+        internal string GetUserType()
+        {
+            
+            Console.Clear();
+
+            Console.WriteLine("1: Wood Price: 125");
+            Console.WriteLine("2: Metal Price: 250 ");
+            Console.WriteLine("3: Plastic: 75");
+            Console.WriteLine("4: Glass: 300");
+            Console.WriteLine("--------------------------------------\n");
+
+            int typeInput = GetUserQuantity("\n\nPlease choose your material type.\n");
+
+            new OrderTypes
+            {
+                MaterialType = materialName
+            };
+
+
+            switch (typeInput)
+            {
+                case 1:
+                    finalTypeInput = 125;
+                    return materialName = "Wood";
+                case 2:
+                    finalTypeInput = 250;
+                    return materialName = "Metal";
+                case 3:
+                    finalTypeInput = 75;
+                    return materialName = "Plastic";
+                case 4:
+                    finalTypeInput = 300;
+                    return materialName = "Glass";
+                default:
+                    Console.WriteLine("\nInvalid input. Choose between 1-4.\n");
+                    break;
+            }
+
+            return materialName;
+ 
+        }
+
         internal int GetUserPrice()
         {
-            int price = finalNumberInput * 50;//A temporary price number.
+            int price = finalTypeInput * finalNumberInput;
             return price;
         }
 
@@ -68,9 +114,13 @@ namespace Order_App
         {
             string dateInput = GetUserDate();
 
-            int orderQuantity = GetUserQuantity("\n\nPlease write the amount of the item you want to buy.\n\n");
+            string orderMaterialType = GetUserType();
+
+            int orderQuantity = GetUserQuantity("\n\nPlease write the amount of the material you want to buy.\n\n");
 
             int orderPrice = GetUserPrice();
+
+            
 
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -78,10 +128,11 @@ namespace Order_App
                 var tableCmd = connection.CreateCommand();
 
                 tableCmd.CommandText =
-                    $"INSERT INTO order_table(date,quantity,price) VALUES ('{dateInput}','{orderQuantity}','{orderPrice}')";
+                    "INSERT INTO order_table (date, quantity, Type, price) VALUES (@date, @quantity, @type, @price)";
 
                 tableCmd.Parameters.AddWithValue("@date", dateInput);
                 tableCmd.Parameters.AddWithValue("@quantity", orderQuantity);
+                tableCmd.Parameters.AddWithValue("@type", orderMaterialType);
                 tableCmd.Parameters.AddWithValue("@price", orderPrice);
 
                 tableCmd.ExecuteNonQuery();
@@ -116,7 +167,8 @@ namespace Order_App
                             Id = reader.GetInt32(0),
                             Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
                             Quantity = reader.GetInt32(2),
-                            Price = reader.GetInt32(3),
+                            MaterialType = reader.GetString(3),
+                            Price = reader.GetInt32(4),
                         });
 
                     }
@@ -131,7 +183,7 @@ namespace Order_App
                 Console.WriteLine("--------------------------");
                 foreach (var orders in tableData)//gets every object in the database **code snippet*
                 {
-                    Console.WriteLine($"ID: {orders.Id} - DATE: {orders.Date.ToString("dd-MMM-yyyy")} - QUANTITY: {orders.Quantity} - PRICE: {orders.Price}");
+                    Console.WriteLine($"ID: {orders.Id} - DATE: {orders.Date.ToString("dd-MMM-yyyy")} - QUANTITY: {orders.Quantity} - TYPE: {orders.MaterialType}  - PRICE: {orders.Price}");
                 }
                 Console.WriteLine("--------------------------\n");
             }
@@ -197,17 +249,20 @@ namespace Order_App
 
                 int quantity = GetUserQuantity("\n\nUpdate the amount of stock you want to buy.\n\n");
 
+                string materialType = GetUserType();
+
                 int price = GetUserPrice();
 
                 var tableCommand = connection.CreateCommand();
 
 
 
-                tableCommand.CommandText = 
-                    $"UPDATE order_table SET date = '{date}', quantity = {quantity}, price = {price} WHERE Id = {getId}";
-                tableCommand.Parameters.AddWithValue("@Date",date);
-                tableCommand.Parameters.AddWithValue("@Quantity", quantity);
-                tableCommand.Parameters.AddWithValue("@Id", getId);
+                tableCommand.CommandText =
+                    "UPDATE order_table SET date = @date, quantity = @quantity, type = @type, price = @price WHERE Id = @getId";
+                tableCommand.Parameters.AddWithValue("@date",date);
+                tableCommand.Parameters.AddWithValue("@quantity", quantity);
+                tableCmd.Parameters.AddWithValue("@type", materialType);
+                tableCommand.Parameters.AddWithValue("@id", getId);
                 tableCommand.ExecuteNonQuery();
 
                 connection.Close();

@@ -13,6 +13,7 @@ namespace Order_app
     class Entry
     {
         static string connectionString = @"Data Source=Order_App.db";
+        
         static void Main(string[] args)
         {
             using (var connection = new SqliteConnection(connectionString)) 
@@ -26,6 +27,7 @@ namespace Order_app
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         Date Text,
                         Quantity INTEGER,
+                        Type VARCHAR,
                         Price INTEGER)";
 
 
